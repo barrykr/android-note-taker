@@ -263,6 +263,7 @@ async function transcribe(blob) {
              : type.includes('ogg')  ? 'ogg'
              : type.includes('mp3') || type.includes('mpeg') ? 'mp3'
              : 'mp4'; // default covers audio/mp4, video/mp4, unknown iOS formats
+  alert(`DEBUG — blob.type: "${blob.type}" | ext: ${ext} | size: ${blob.size}`);
   fd.append('file', blob, `recording.${ext}`);
   fd.append('model', 'whisper-1');
   const resp = await fetch('https://api.openai.com/v1/audio/transcriptions', {
