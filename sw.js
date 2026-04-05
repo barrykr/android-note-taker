@@ -1,4 +1,4 @@
-const CACHE = 'note-taker-v1';
+const CACHE = 'note-taker-v2';
 const BASE  = '/android-note-taker';
 const SHELL = [BASE + '/', BASE + '/index.html', BASE + '/style.css', BASE + '/app.js',
                'https://unpkg.com/lucide@latest/dist/umd/lucide.min.js'];
@@ -16,11 +16,18 @@ self.addEventListener('activate', e =>
 );
 
 self.addEventListener('fetch', e => {
-  // Network-first for API calls, cache-first for app shell
+  // API calls go straight to network
   if (e.request.url.includes('api.anthropic.com') || e.request.url.includes('api.openai.com')) {
-    return; // let these go straight to network
+    return;
   }
+  // Network-first for app shell — always get fresh content, fall back to cache if offline
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    fetch(e.request)
+      .then(resp => {
+        const clone = resp.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return resp;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
