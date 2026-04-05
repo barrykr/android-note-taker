@@ -323,7 +323,7 @@ const userLabel    = document.getElementById('userLabel');
 const switchUserBtn = document.getElementById('switchUserBtn');
 const settingsBtn   = document.getElementById('settingsBtn');
 
-let currentUser = localStorage.getItem('currentUser') || null;
+let currentUser = null;
 
 function getUsers() {
   return JSON.parse(localStorage.getItem('users') || '[]');
@@ -366,7 +366,6 @@ function showLogin() {
 function startSession(name) {
   addUser(name);
   currentUser = name;
-  localStorage.setItem('currentUser', name);
   showApp();
 }
 
@@ -380,7 +379,6 @@ openSettingsBtn.addEventListener('click', showSettings);
 
 switchUserBtn.addEventListener('click', () => {
   currentUser = null;
-  localStorage.removeItem('currentUser');
   history = [];
   convoHistory.innerHTML = '';
   mainInput.value = '';
@@ -401,8 +399,6 @@ function showApp() {
 // ── Boot ───────────────────────────────────────────────────────────────────────
 if (!keysSet()) {
   showSettings();
-} else if (currentUser) {
-  showApp();
 } else {
   showLogin();
 }
