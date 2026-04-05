@@ -305,7 +305,10 @@ async function decryptBundle(password, bundle) {
 }
 
 let encryptedBundle = null;
-fetch('keys.json').then(r => r.ok ? r.json() : null).then(b => { encryptedBundle = b; }).catch(() => {});
+fetch('keys.json', { cache: 'no-store' })
+  .then(r => r.ok ? r.json() : null)
+  .then(b => { encryptedBundle = (b && b.data) ? b : null; })
+  .catch(() => {});
 
 // ── Settings screen ────────────────────────────────────────────────────────────
 const settingsScreen  = document.getElementById('settingsScreen');
@@ -321,10 +324,11 @@ const unlockStatus    = document.getElementById('unlockStatus');
 unlockBtn.addEventListener('click', async () => {
   const password = sharedKeyInput.value.trim();
   if (!password) { unlockStatus.textContent = 'Enter the access key.'; return; }
-  if (!encryptedBundle) { unlockStatus.textContent = 'No shared keys available.'; return; }
+  if (!encryptedBundle) { unlockStatus.textContent = 'Shared keys not loaded yet — try again in a moment.'; return; }
   unlockStatus.textContent = 'Unlocking…';
   try {
     const keys = await decryptBundle(password, encryptedBundle);
+    if (!keys.anthropic || !keys.openai) throw new Error('empty');
     localStorage.setItem('anthropicKey', keys.anthropic);
     localStorage.setItem('openaiKey',    keys.openai);
     unlockStatus.textContent = '';
