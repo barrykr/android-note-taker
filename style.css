@@ -186,7 +186,7 @@ button.icon-btn svg      { width: 18px; height: 18px; stroke-width: 1.75; }
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 1.25rem;
-  min-height: 200px;
+  min-height: 320px;
   overflow-y: auto;
 }
 
