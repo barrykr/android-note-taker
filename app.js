@@ -96,26 +96,62 @@ function stripEditMarker(content) {
   return content.replace(EDIT_MARKER_RE, '').trimEnd();
 }
 
-async function loadAllNotes(user) {
-  const MAX = 600_000;
-  const records = await dbAllNotes(user);
-  // Collect newest-first, then reverse for presentation
+const STOP_WORDS = new Set([
+  'the','a','an','is','are','was','were','what','when','where','who','how',
+  'did','do','does','have','had','has','i','my','me','about','for','of',
+  'in','on','at','to','from','with','and','or','but','not','it','this','that'
+]);
+
+function extractKeywords(query) {
+  return query.toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .split(/\s+/)
+    .filter(w => w.length > 2 && !STOP_WORDS.has(w));
+}
+
+function keywordScore(content, keywords) {
+  if (!keywords.length) return 0;
+  const lower = content.toLowerCase();
+  return keywords.reduce((s, kw) => s + (lower.split(kw).length - 1), 0);
+}
+
+async function loadAllNotes(user, query = '') {
+  const MAX     = 30_000;   // ~7K tokens — fast to send, plenty of context
+  const RECENT  = 7;        // always include last N days regardless of keywords
+  const records = await dbAllNotes(user); // sorted oldest→newest
+  if (!records.length) return '';
+
+  const today    = new Date();
+  const keywords = extractKeywords(query);
+
+  // Split into recent (last 7 days) and older
+  const recentCutoff = new Date(today);
+  recentCutoff.setDate(today.getDate() - RECENT);
+  const cutoffStr = recentCutoff.toISOString().slice(0, 10);
+
+  const recent = records.filter(r => r.date >= cutoffStr);
+  const older  = records.filter(r => r.date <  cutoffStr);
+
+  // Score older records by keyword relevance, keep top matches
+  const scoredOlder = older
+    .map(r => ({ ...r, score: keywordScore(r.content, keywords) }))
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score || b.date.localeCompare(a.date));
+
+  // Build context: relevant older notes first (oldest→newest), then recent
+  const candidates = [...scoredOlder, ...recent]
+    .sort((a, b) => a.date.localeCompare(b.date));
+
   const parts = [];
   let total = 0;
-  let truncated = false;
-  for (let i = records.length - 1; i >= 0; i--) {
-    const text = stripEditMarker(records[i].content).trim();
+  for (const r of candidates) {
+    const text = stripEditMarker(r.content).trim();
     if (!text) continue;
-    if (total + text.length > MAX) {
-      truncated = true;
-      break;
-    }
-    parts.unshift(text);
+    if (total + text.length > MAX) break;
+    parts.push(text);
     total += text.length;
   }
-  let result = parts.join('\n\n');
-  if (truncated) result = '[Oldest notes omitted — context limit]\n\n' + result;
-  return result;
+  return parts.join('\n\n');
 }
 
 // ── API key management ─────────────────────────────────────────────────────────
@@ -533,7 +569,7 @@ async function sendQuery(question) {
   mainInput.value = '';
 
   try {
-    const allNotes = await loadAllNotes(currentUser);
+    const allNotes = await loadAllNotes(currentUser, question);
     const notesSection = allNotes.trim()
       ? `<user_notes>\n${allNotes}\n</user_notes>`
       : '<user_notes>No notes recorded yet.</user_notes>';
