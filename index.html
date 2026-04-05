@@ -15,7 +15,21 @@
   <div id="settingsScreen" style="display:none">
     <div id="settingsBox">
       <h1>Note Taker</h1>
-      <p class="login-sub">Enter your API keys to get started</p>
+
+      <div id="sharedKeySection">
+        <p class="login-sub" style="margin-bottom:0.5rem">Have an access key? Unlock shared API keys:</p>
+        <div class="row">
+          <input id="sharedKeyInput" type="password" placeholder="Access key…" autocomplete="off" style="flex:1" />
+          <button id="unlockBtn" class="success">Unlock</button>
+        </div>
+        <div id="unlockStatus"></div>
+        <div style="display:flex;align-items:center;gap:0.5rem;margin:1rem 0">
+          <hr style="flex:1;border:none;border-top:1px solid #ddd" />
+          <span style="color:#999;font-size:0.85rem">or enter your own keys</span>
+          <hr style="flex:1;border:none;border-top:1px solid #ddd" />
+        </div>
+      </div>
+
       <label class="field-label">Anthropic API Key (Claude)</label>
       <textarea id="anthropicKeyInput" placeholder="sk-ant-…" autocomplete="off" rows="3" style="font-family:monospace;word-break:break-all;resize:vertical"></textarea>
       <label class="field-label">OpenAI API Key (Whisper transcription)</label>

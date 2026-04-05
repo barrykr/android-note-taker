@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Encrypt API Keys</title>
+  <style>
+    body { font-family: sans-serif; max-width: 540px; margin: 2rem auto; padding: 0 1rem; }
+    label { display: block; margin-top: 1rem; font-weight: bold; font-size: 0.9rem; }
+    textarea, input { width: 100%; box-sizing: border-box; margin-top: 0.3rem; padding: 0.5rem;
+      font-family: monospace; font-size: 0.85rem; border: 1px solid #ccc; border-radius: 4px; }
+    textarea { resize: vertical; }
+    button { margin-top: 1rem; padding: 0.6rem 1.4rem; background: #3478d0; color: #fff;
+      border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+    button:hover { background: #2560b0; }
+    #output { margin-top: 1.5rem; }
+    #outputJson { min-height: 6rem; background: #f5f5f5; }
+    .note { font-size: 0.82rem; color: #666; margin-top: 0.4rem; }
+    .success { color: green; margin-top: 0.5rem; }
+    .error   { color: red;   margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h2>Encrypt API Keys for Note Taker</h2>
+  <p class="note">Run this page locally in your browser. Nothing leaves your machine.</p>
+
+  <label>Anthropic API Key</label>
+  <textarea id="anthropicKey" rows="3" placeholder="sk-ant-…"></textarea>
+
+  <label>OpenAI API Key</label>
+  <textarea id="openaiKey" rows="2" placeholder="sk-…"></textarea>
+
+  <label>Encryption password (the shared access key you'll give testers)</label>
+  <input id="password" type="text" placeholder="e.g. barrydawn" />
+
+  <button id="encryptBtn">Encrypt &amp; Generate keys.json</button>
+  <div id="status"></div>
+
+  <div id="output" style="display:none">
+    <label>keys.json — copy this into your repo as <code>keys.json</code></label>
+    <textarea id="outputJson" rows="8" readonly></textarea>
+    <button id="copyBtn">Copy to clipboard</button>
+    <p class="note">Commit this file. The password is NOT stored in it.</p>
+  </div>
+
+  <script>
+    async function deriveKey(password, salt) {
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']
+      );
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt, iterations: 200000, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt']
+      );
+    }
+
+    function toB64(buf) {
+      return btoa(String.fromCharCode(...new Uint8Array(buf instanceof ArrayBuffer ? buf : buf.buffer)));
+    }
+
+    document.getElementById('encryptBtn').addEventListener('click', async () => {
+      const anthropic = document.getElementById('anthropicKey').value.trim();
+      const openai    = document.getElementById('openaiKey').value.trim();
+      const password  = document.getElementById('password').value.trim();
+      const status    = document.getElementById('status');
+
+      if (!anthropic || !openai || !password) {
+        status.className = 'error'; status.textContent = 'All fields are required.'; return;
+      }
+
+      try {
+        const salt = crypto.getRandomValues(new Uint8Array(16));
+        const iv   = crypto.getRandomValues(new Uint8Array(12));
+        const key  = await deriveKey(password, salt);
+        const plain = new TextEncoder().encode(JSON.stringify({ anthropic, openai }));
+        const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plain);
+
+        const bundle = { salt: toB64(salt), iv: toB64(iv), data: toB64(cipher) };
+        const json   = JSON.stringify(bundle, null, 2);
+
+        document.getElementById('outputJson').value = json;
+        document.getElementById('output').style.display = '';
+        status.className = 'success'; status.textContent = 'Encrypted successfully.';
+      } catch (e) {
+        status.className = 'error'; status.textContent = `Error: ${e.message}`;
+      }
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      navigator.clipboard.writeText(document.getElementById('outputJson').value);
+    });
+  </script>
+</body>
+</html>

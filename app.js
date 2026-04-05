@@ -281,6 +281,32 @@ async function parseDate(text) {
   return result;
 }
 
+// ── Shared-key decryption (AES-GCM + PBKDF2) ──────────────────────────────────
+async function deriveKey(password, salt) {
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']
+  );
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 200000, hash: 'SHA-256' },
+    keyMaterial,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['decrypt']
+  );
+}
+
+async function decryptBundle(password, bundle) {
+  const salt   = Uint8Array.from(atob(bundle.salt), c => c.charCodeAt(0));
+  const iv     = Uint8Array.from(atob(bundle.iv),   c => c.charCodeAt(0));
+  const cipher = Uint8Array.from(atob(bundle.data), c => c.charCodeAt(0));
+  const key    = await deriveKey(password, salt);
+  const plain  = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, cipher);
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+
+let encryptedBundle = null;
+fetch('keys.json').then(r => r.ok ? r.json() : null).then(b => { encryptedBundle = b; }).catch(() => {});
+
 // ── Settings screen ────────────────────────────────────────────────────────────
 const settingsScreen  = document.getElementById('settingsScreen');
 const anthropicKeyIn  = document.getElementById('anthropicKeyInput');
@@ -288,6 +314,26 @@ const openaiKeyIn     = document.getElementById('openaiKeyInput');
 const saveKeysBtn     = document.getElementById('saveKeysBtn');
 const settingsStatus  = document.getElementById('settingsStatus');
 const openSettingsBtn = document.getElementById('openSettingsBtn');
+const sharedKeyInput  = document.getElementById('sharedKeyInput');
+const unlockBtn       = document.getElementById('unlockBtn');
+const unlockStatus    = document.getElementById('unlockStatus');
+
+unlockBtn.addEventListener('click', async () => {
+  const password = sharedKeyInput.value.trim();
+  if (!password) { unlockStatus.textContent = 'Enter the access key.'; return; }
+  if (!encryptedBundle) { unlockStatus.textContent = 'No shared keys available.'; return; }
+  unlockStatus.textContent = 'Unlocking…';
+  try {
+    const keys = await decryptBundle(password, encryptedBundle);
+    localStorage.setItem('anthropicKey', keys.anthropic);
+    localStorage.setItem('openaiKey',    keys.openai);
+    unlockStatus.textContent = '';
+    settingsScreen.style.display = 'none';
+    currentUser ? showApp() : showLogin();
+  } catch {
+    unlockStatus.textContent = 'Incorrect access key.';
+  }
+});
 
 function showSettings() {
   settingsScreen.style.display  = '';
