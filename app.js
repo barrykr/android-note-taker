@@ -596,9 +596,7 @@ async function startRecording(triggerBtn, statusEl, onResult, doCleanup = false)
           onResult(raw.trim());
         }
       } catch (e) {
-        const msg = `Error: ${e.message}`;
-        if (statusEl) statusEl.textContent = msg;
-        alert(msg);
+        if (statusEl) statusEl.textContent = `Error: ${e.message}`;
       }
     };
 
@@ -613,7 +611,6 @@ async function startRecording(triggerBtn, statusEl, onResult, doCleanup = false)
   } catch (e) {
     const msg = `Mic error: ${e.message}`;
     if (statusEl) statusEl.textContent = msg;
-    alert(msg);
   }
 }
 
