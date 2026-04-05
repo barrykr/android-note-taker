@@ -263,14 +263,21 @@ async function transcribe(blob) {
              : type.includes('ogg')  ? 'ogg'
              : type.includes('mp3') || type.includes('mpeg') ? 'mp3'
              : 'mp4'; // default covers audio/mp4, video/mp4, unknown iOS formats
-  alert(`DEBUG — blob.type: "${blob.type}" | ext: ${ext} | size: ${blob.size}`);
   fd.append('file', blob, `recording.${ext}`);
   fd.append('model', 'whisper-1');
-  const resp = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${openai}` },
-    body: fd,
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+  let resp;
+  try {
+    resp = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${openai}` },
+      body: fd,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}));
     throw new Error(err.error?.message || `Whisper error ${resp.status}`);
@@ -589,7 +596,9 @@ async function startRecording(triggerBtn, statusEl, onResult, doCleanup = false)
           onResult(raw.trim());
         }
       } catch (e) {
-        if (statusEl) statusEl.textContent = `Error: ${e.message}`;
+        const msg = `Error: ${e.message}`;
+        if (statusEl) statusEl.textContent = msg;
+        alert(msg);
       }
     };
 
