@@ -2,7 +2,7 @@
   "name": "Note Taker",
   "short_name": "Notes",
   "description": "Personal AI-powered note taker",
-  "start_url": "/",
+  "start_url": "/android-note-taker/",
   "display": "standalone",
   "background_color": "#f5f5f5",
   "theme_color": "#4a90d9",

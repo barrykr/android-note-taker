@@ -1,5 +1,6 @@
 const CACHE = 'note-taker-v1';
-const SHELL = ['/', '/index.html', '/style.css', '/app.js',
+const BASE  = '/android-note-taker';
+const SHELL = [BASE + '/', BASE + '/index.html', BASE + '/style.css', BASE + '/app.js',
                'https://unpkg.com/lucide@latest/dist/umd/lucide.min.js'];
 
 self.addEventListener('install', e =>
