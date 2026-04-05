@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#4a90d9" />
+  <title>Note Taker</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+  <!-- ── Settings screen ── -->
+  <div id="settingsScreen" style="display:none">
+    <div id="settingsBox">
+      <h1>Note Taker</h1>
+      <p class="login-sub">Enter your API keys to get started</p>
+      <label class="field-label">Anthropic API Key (Claude)</label>
+      <input id="anthropicKeyInput" type="password" placeholder="sk-ant-…" autocomplete="off" />
+      <label class="field-label">OpenAI API Key (Whisper transcription)</label>
+      <input id="openaiKeyInput" type="password" placeholder="sk-…" autocomplete="off" />
+      <button id="saveKeysBtn" class="success" style="width:100%">Save &amp; Continue</button>
+      <div id="settingsStatus"></div>
+    </div>
+  </div>
+
+  <!-- ── Login screen ── -->
+  <div id="loginScreen" style="display:none">
+    <div id="loginBox">
+      <h1>Note Taker</h1>
+      <p class="login-sub">Who's using the app?</p>
+      <div id="userList"></div>
+      <div id="newUserRow">
+        <input id="newUserInput" type="text" placeholder="Enter a new name…" maxlength="64" />
+        <button id="newUserBtn" class="success">Start</button>
+      </div>
+      <div id="loginStatus"></div>
+      <button id="openSettingsBtn" class="secondary" style="width:100%;margin-top:0.5rem">&#9881; API Settings</button>
+    </div>
+  </div>
+
+  <!-- ── Main app ── -->
+  <div id="app" style="display:none">
+    <header>
+      <h1>Notes</h1>
+      <div class="header-right">
+        <span id="clock"></span>
+        <button id="settingsBtn" class="icon-btn" title="API Settings"><i data-lucide="settings"></i></button>
+        <button id="switchUserBtn" class="secondary" title="Switch user">&#128100; <span id="userLabel"></span></button>
+      </div>
+    </header>
+
+    <div id="mainLayout">
+
+      <div id="leftPanel">
+
+        <section id="inputSection">
+          <div class="section-label">Note / Query</div>
+          <textarea id="mainInput" placeholder="Write or dictate a note, or ask a question…" rows="10"></textarea>
+          <div class="row">
+            <button id="micBtn" class="icon-btn" title="Dictate — click to start, click again to stop"><i data-lucide="mic"></i></button>
+            <button id="noteBtn" class="icon-btn" title="Save as Note"><i data-lucide="notebook-pen"></i></button>
+            <button id="queryBtn" class="icon-btn" title="Ask a question about your notes"><i data-lucide="search"></i></button>
+            <button id="editBtn" class="icon-btn" title="Edit a previous note"><i data-lucide="pencil"></i></button>
+            <span id="inputStatus"></span>
+          </div>
+          <div id="micStatus"></div>
+        </section>
+
+        <section id="editSection" style="display:none">
+          <div id="editDatePhase">
+            <div class="section-label">Edit Notes — Choose a date</div>
+            <div class="row">
+              <input id="editDateInput" type="text" placeholder="e.g. yesterday, Apr 3…" style="flex:1" />
+              <button id="editDateMicBtn" class="icon-btn" title="Speak the date"><i data-lucide="mic"></i></button>
+              <button id="editDateGoBtn" class="icon-btn" title="Load notes for this date"><i data-lucide="arrow-right"></i></button>
+              <button id="editCancelBtn" class="icon-btn" title="Cancel"><i data-lucide="x"></i></button>
+            </div>
+            <div id="editDateStatus"></div>
+            <div id="editDateList"></div>
+          </div>
+          <div id="editEditorPhase" style="display:none">
+            <div class="section-label" id="editDateLabel"></div>
+            <textarea id="editNoteText" rows="12"></textarea>
+            <div class="row">
+              <button id="editSaveBtn" class="icon-btn" title="Save changes"><i data-lucide="save"></i></button>
+              <button id="editBackBtn" class="icon-btn" title="Back to date list"><i data-lucide="arrow-left"></i></button>
+              <span id="editStatus"></span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <div id="queryPanel">
+        <div id="convoHistory"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
