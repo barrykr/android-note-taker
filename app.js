@@ -343,9 +343,10 @@ function showSettings() {
   settingsScreen.style.display  = '';
   loginScreen.style.display     = 'none';
   appEl.style.display           = 'none';
-  const k = getKeys();
-  anthropicKeyIn.value = k.anthropic;
-  openaiKeyIn.value    = k.openai;
+  anthropicKeyIn.value = '';
+  openaiKeyIn.value    = '';
+  sharedKeyInput.value = '';
+  unlockStatus.textContent = '';
 }
 
 saveKeysBtn.addEventListener('click', () => {
