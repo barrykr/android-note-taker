@@ -53,6 +53,22 @@ async function dbAllDates(user) {
   });
 }
 
+async function dbDeleteCategory(user) {
+  const db     = await openDB();
+  const dates  = await new Promise((res, rej) => {
+    const req = db.transaction('notes').objectStore('notes').index('by_user').getAll(user);
+    req.onsuccess = e => res(e.target.result.map(r => r.date));
+    req.onerror   = e => rej(e.target.error);
+  });
+  return new Promise((res, rej) => {
+    const tx    = db.transaction('notes', 'readwrite');
+    const store = tx.objectStore('notes');
+    dates.forEach(date => store.delete([user, date]));
+    tx.oncomplete = () => res();
+    tx.onerror    = e => rej(e.target.error);
+  });
+}
+
 async function dbAllNotes(user) {
   const db = await openDB();
   return new Promise((res, rej) => {
@@ -402,11 +418,31 @@ function showLogin() {
     lbl.textContent     = 'Select a category:';
     userList.appendChild(lbl);
     cats.forEach(name => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:0.4rem;align-items:center;margin-bottom:0.4rem';
+
       const btn = document.createElement('button');
       btn.className   = 'user-btn';
       btn.textContent = name;
+      btn.style.flex  = '1';
       btn.addEventListener('click', () => startSession(name));
-      userList.appendChild(btn);
+
+      const del = document.createElement('button');
+      del.className   = 'secondary';
+      del.textContent = '🗑';
+      del.title       = `Delete "${name}" and all its notes`;
+      del.style.cssText = 'padding:0.35rem 0.6rem;font-size:1rem;flex-shrink:0';
+      del.addEventListener('click', async () => {
+        if (!confirm(`Delete category "${name}" and ALL its notes? This cannot be undone.`)) return;
+        await dbDeleteCategory(name);
+        const updated = getCategories().filter(c => c !== name);
+        localStorage.setItem('users', JSON.stringify(updated));
+        showLogin();
+      });
+
+      row.appendChild(btn);
+      row.appendChild(del);
+      userList.appendChild(row);
     });
     const div = document.createElement('p');
     div.style.cssText = 'font-size:0.85rem;color:#888;margin-top:0.5rem';
