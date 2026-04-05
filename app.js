@@ -509,7 +509,9 @@ async function startRecording(triggerBtn, statusEl, onResult, doCleanup = false)
     if (statusEl) statusEl.textContent = 'Recording…';
     mediaRecorder.start();
   } catch (e) {
-    if (statusEl) statusEl.textContent = `Mic error: ${e.message}`;
+    const msg = `Mic error: ${e.message}`;
+    if (statusEl) statusEl.textContent = msg;
+    alert(msg);
   }
 }
 
