@@ -258,7 +258,8 @@ async function anthropicOnce(system, userMsg, maxTokens = 64) {
 async function transcribe(blob) {
   const { openai } = getKeys();
   const fd = new FormData();
-  fd.append('file', blob, 'recording.webm');
+  const ext = blob.type.includes('mp4') ? 'mp4' : 'webm';
+  fd.append('file', blob, `recording.${ext}`);
   fd.append('model', 'whisper-1');
   const resp = await fetch('https://api.openai.com/v1/audio/transcriptions', {
     method: 'POST',
@@ -524,7 +525,8 @@ async function startRecording(triggerBtn, statusEl, onResult, doCleanup = false)
   try {
     const stream  = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioChunks   = [];
-    mediaRecorder = new MediaRecorder(stream);
+    const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+    mediaRecorder = new MediaRecorder(stream, { mimeType });
     mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
 
     // Silence detection
@@ -567,7 +569,8 @@ async function startRecording(triggerBtn, statusEl, onResult, doCleanup = false)
       if (!audioChunks.length) { if (statusEl) statusEl.textContent = 'Nothing recorded.'; return; }
       if (statusEl) statusEl.textContent = 'Transcribing…';
       try {
-        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+        const mimeType = mediaRecorder.mimeType || 'audio/webm';
+        const blob = new Blob(audioChunks, { type: mimeType });
         const raw  = await transcribe(blob);
         if (!raw.trim()) { if (statusEl) statusEl.textContent = 'Nothing heard.'; return; }
         if (doCleanup) {
