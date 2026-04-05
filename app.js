@@ -580,6 +580,7 @@ async function startRecording(triggerBtn, statusEl, onResult, doCleanup = false)
 
       if (!audioChunks.length) { if (statusEl) statusEl.textContent = 'Nothing recorded.'; return; }
       if (statusEl) statusEl.textContent = 'Transcribing…';
+      micBtn.disabled = noteBtn.disabled = queryBtn.disabled = editBtn.disabled = true;
       try {
         const mimeType = mediaRecorder.mimeType || 'audio/webm';
         const blob = new Blob(audioChunks, { type: mimeType });
@@ -597,6 +598,8 @@ async function startRecording(triggerBtn, statusEl, onResult, doCleanup = false)
         }
       } catch (e) {
         if (statusEl) statusEl.textContent = `Error: ${e.message}`;
+      } finally {
+        micBtn.disabled = noteBtn.disabled = queryBtn.disabled = editBtn.disabled = false;
       }
     };
 
