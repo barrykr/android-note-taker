@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Note Taker — Help</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f4f7fb;
+      color: #1a1a2e;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #3478d0 0%, #1a56b0 100%);
+      color: #fff;
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+    }
+    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+    header p  { margin-top: 0.5rem; font-size: 1.05rem; opacity: 0.88; }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1a56b0;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h2 .icon {
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    p { margin-bottom: 0.75rem; color: #333; }
+    p:last-child { margin-bottom: 0; }
+
+    ul, ol {
+      padding-left: 1.4rem;
+      margin-bottom: 0.75rem;
+      color: #333;
+    }
+    li { margin-bottom: 0.4rem; }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .step-card {
+      background: #f0f6ff;
+      border: 1px solid #c8def7;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .step-card .num {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #3478d0;
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+    .step-card strong { display: block; margin-bottom: 0.2rem; font-size: 0.95rem; }
+    .step-card p { font-size: 0.88rem; color: #555; margin: 0; }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .btn-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #f0f6ff;
+      border: 1px solid #b3d4f5;
+      border-radius: 20px;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.88rem;
+      color: #1a56b0;
+      font-weight: 500;
+    }
+
+    .note-box {
+      background: #fffbea;
+      border-left: 4px solid #f0c040;
+      border-radius: 0 8px 8px 0;
+      padding: 0.9rem 1rem;
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .tip-box {
+      background: #edfaf3;
+      border-left: 4px solid #3dbb78;
+      border-radius: 0 8px 8px 0;
+      padding: 0.9rem 1rem;
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: #2a6644;
+    }
+
+    code {
+      font-family: monospace;
+      font-size: 0.88em;
+      background: #f0f0f0;
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      color: #c0392b;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #aaa;
+      padding-bottom: 2rem;
+    }
+
+    @media (max-width: 500px) {
+      header h1 { font-size: 1.5rem; }
+      section { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📓 Note Taker</h1>
+  <p>Your personal AI-powered note assistant</p>
+</header>
+
+<main>
+
+  <!-- Overview -->
+  <section>
+    <h2><span class="icon">💡</span> What is Note Taker?</h2>
+    <p>Note Taker is a private, AI-powered note-taking app that runs entirely in your browser as a Progressive Web App (PWA). You can dictate or type notes, then ask questions about them in plain English — the AI reads your notes and answers from them.</p>
+    <p>All notes are stored locally on your device using IndexedDB. Nothing is sent to any server except the text of your notes when you make a query or transcribe a recording.</p>
+  </section>
+
+  <!-- Getting started -->
+  <section>
+    <h2><span class="icon">🚀</span> Getting Started</h2>
+    <div class="step-grid">
+      <div class="step-card">
+        <div class="num">1</div>
+        <strong>Install the app</strong>
+        <p>In Chrome, tap the menu → <em>Install app</em> to add it to your home screen for full-screen, app-like use.</p>
+      </div>
+      <div class="step-card">
+        <div class="num">2</div>
+        <strong>Enter API keys</strong>
+        <p>Tap <em>Unlock</em> with the shared access key, or enter your own Anthropic and OpenAI keys in Settings.</p>
+      </div>
+      <div class="step-card">
+        <div class="num">3</div>
+        <strong>Choose a user</strong>
+        <p>Each user has their own separate notes. Create a name on first use — notes are stored under that name.</p>
+      </div>
+      <div class="step-card">
+        <div class="num">4</div>
+        <strong>Start noting</strong>
+        <p>Dictate or type a note and tap Save, or ask a question about your existing notes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- The main buttons -->
+  <section>
+    <h2><span class="icon">🎛️</span> The Toolbar Buttons</h2>
+    <div class="btn-row">
+      <span class="btn-tag">🎙️ Mic — Dictate</span>
+      <span class="btn-tag">📓 Save Note</span>
+      <span class="btn-tag">🔍 Query</span>
+      <span class="btn-tag">✏️ Edit</span>
+    </div>
+    <ul style="margin-top:1rem">
+      <li><strong>Mic (dictate):</strong> Tap once to start recording. Speak your note. Recording stops automatically after 2 seconds of silence, or tap again to stop manually. The audio is transcribed and placed in the text box.</li>
+      <li><strong>Save Note:</strong> Saves whatever is in the text box as a note, timestamped to today. Notes are appended — multiple saves in one day all accumulate.</li>
+      <li><strong>Query:</strong> Asks the AI a question using the text in the box. The AI reads all your relevant notes before answering. Results appear in the panel on the right (or below on mobile).</li>
+      <li><strong>Edit:</strong> Opens the note editor. Speak or type a date (e.g. <em>yesterday</em>, <em>April 3</em>) to load that day's notes and edit them directly.</li>
+    </ul>
+  </section>
+
+  <!-- Dictation -->
+  <section>
+    <h2><span class="icon">🎙️</span> Dictating Notes</h2>
+    <p>Tap the orange microphone button to start. The button pulses red while recording. Speak naturally — the app uses OpenAI Whisper for accurate transcription.</p>
+    <p>Recording stops automatically after 2 seconds of silence once you have started speaking, or you can tap the button again to stop immediately.</p>
+    <p>The transcribed text is placed in the main text box. You can edit it before saving.</p>
+    <div class="tip-box">
+      <strong>Tip:</strong> You can dictate a note then tap Save, or dictate a question then tap Query — it works either way.
+    </div>
+    <div class="note-box">
+      <strong>Note:</strong> Transcription requires your OpenAI key and an internet connection. The app will ask for microphone permission on first use.
+    </div>
+  </section>
+
+  <!-- Querying -->
+  <section>
+    <h2><span class="icon">🔍</span> Querying Your Notes</h2>
+    <p>Type or dictate a question, then tap the Query button. The AI (Claude) reads your notes and answers based on what you have recorded.</p>
+    <p>Example questions:</p>
+    <ul>
+      <li><em>"What did I eat last week?"</em></li>
+      <li><em>"Summarise my notes from this month."</em></li>
+      <li><em>"Did I mention anything about the dentist?"</em></li>
+      <li><em>"What tasks have I noted that are still outstanding?"</em></li>
+    </ul>
+    <p>The conversation history is shown in the right panel. Each exchange shows your question and the AI's answer.</p>
+    <div class="tip-box">
+      <strong>Tip:</strong> The AI only sees your notes — it will say so if you ask something not covered in them.
+    </div>
+  </section>
+
+  <!-- Editing -->
+  <section>
+    <h2><span class="icon">✏️</span> Editing Notes</h2>
+    <p>Tap the pencil (Edit) button to enter edit mode.</p>
+    <ol>
+      <li>Type or speak a date — for example <em>"yesterday"</em>, <em>"Monday"</em>, or <em>"March 15"</em>.</li>
+      <li>Tap the arrow to load the notes for that day.</li>
+      <li>Edit the text directly in the editor.</li>
+      <li>Tap Save to write the changes back.</li>
+    </ol>
+    <p>Edits are marked with an <em>[Edited: …]</em> timestamp appended to the note.</p>
+  </section>
+
+  <!-- Multiple users -->
+  <section>
+    <h2><span class="icon">👤</span> Multiple Users</h2>
+    <p>The app supports multiple separate users on the same device. Each user's notes are completely independent.</p>
+    <p>On every reload you are shown the user picker. Tap your name to continue, or add a new name. To switch mid-session, tap the user button in the top-right corner of the app.</p>
+    <div class="note-box">
+      <strong>Note:</strong> User names and notes are stored locally in your browser. Clearing browser data will remove them.
+    </div>
+  </section>
+
+  <!-- API keys -->
+  <section>
+    <h2><span class="icon">🔑</span> API Keys &amp; Settings</h2>
+    <p>The app needs two API keys to function:</p>
+    <ul>
+      <li><strong>Anthropic key</strong> — powers the AI query feature (Claude).</li>
+      <li><strong>OpenAI key</strong> — powers voice transcription (Whisper).</li>
+    </ul>
+    <p>You can either:</p>
+    <ul>
+      <li><strong>Unlock shared keys</strong> — enter the access key provided by the app administrator. This decrypts pre-stored keys so you don't need your own accounts.</li>
+      <li><strong>Enter your own keys</strong> — paste your personal API keys from <code>console.anthropic.com</code> and <code>platform.openai.com</code>.</li>
+    </ul>
+    <p>Keys are stored in your browser's local storage. Open Settings at any time via the gear icon in the top-right corner.</p>
+    <div class="note-box">
+      <strong>Privacy:</strong> Your API keys never leave your device except as authorisation headers sent directly to Anthropic and OpenAI.
+    </div>
+  </section>
+
+  <!-- PWA / offline -->
+  <section>
+    <h2><span class="icon">📲</span> Installing &amp; Offline Use</h2>
+    <p>Note Taker is a Progressive Web App (PWA). To install it:</p>
+    <ol>
+      <li>Open the site in Chrome on Android.</li>
+      <li>Tap the three-dot menu → <strong>Install app</strong>.</li>
+      <li>The app appears on your home screen and opens full-screen without a browser bar.</li>
+    </ol>
+    <p>Once installed, the app shell loads offline. However, saving notes, querying, and transcription all require an internet connection to reach the AI APIs.</p>
+  </section>
+
+</main>
+
+<footer>
+  Note Taker — built with Claude &amp; the Anthropic API
+</footer>
+
+</body>
+</html>

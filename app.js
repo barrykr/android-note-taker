@@ -373,6 +373,7 @@ const loginStatus  = document.getElementById('loginStatus');
 const userLabel    = document.getElementById('userLabel');
 const switchUserBtn = document.getElementById('switchUserBtn');
 const settingsBtn   = document.getElementById('settingsBtn');
+const helpBtn       = document.getElementById('helpBtn');
 
 let currentUser = null;
 
@@ -437,6 +438,7 @@ switchUserBtn.addEventListener('click', () => {
 });
 
 settingsBtn.addEventListener('click', showSettings);
+helpBtn.addEventListener('click', () => window.open('help.html', '_blank'));
 
 function showApp() {
   loginScreen.style.display    = 'none';
