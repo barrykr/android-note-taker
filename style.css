@@ -35,9 +35,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-height: 50vh;
+  height: 220px;
   overflow-y: auto;
-  padding-right: 0.25rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.5rem;
+  background: #fafafa;
 }
 
 .user-btn {

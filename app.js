@@ -523,43 +523,33 @@ function showLogin() {
   userList.innerHTML         = '';
   loginStatus.textContent    = '';
   const cats = getCategories().slice().sort((a, b) => a.localeCompare(b));
-  if (cats.length) {
-    const lbl = document.createElement('p');
-    lbl.style.cssText   = 'font-size:0.85rem;color:#888;margin-bottom:0.25rem';
-    lbl.textContent     = 'Select a category:';
-    userList.appendChild(lbl);
-    cats.forEach(name => {
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex;gap:0.4rem;align-items:center;margin-bottom:0.4rem';
+  cats.forEach(name => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:0.4rem;align-items:center';
 
-      const btn = document.createElement('button');
-      btn.className   = 'user-btn';
-      btn.textContent = name;
-      btn.style.flex  = '1';
-      btn.addEventListener('click', () => startSession(name));
+    const btn = document.createElement('button');
+    btn.className   = 'user-btn';
+    btn.textContent = name;
+    btn.style.flex  = '1';
+    btn.addEventListener('click', () => startSession(name));
 
-      const del = document.createElement('button');
-      del.className   = 'secondary';
-      del.textContent = '🗑';
-      del.title       = `Delete "${name}" and all its notes`;
-      del.style.cssText = 'padding:0.35rem 0.6rem;font-size:1rem;flex-shrink:0';
-      del.addEventListener('click', async () => {
-        if (!confirm(`Delete category "${name}" and ALL its notes? This cannot be undone.`)) return;
-        await dbDeleteCategory(name);
-        const updated = getCategories().filter(c => c !== name);
-        localStorage.setItem('users', JSON.stringify(updated));
-        showLogin();
-      });
-
-      row.appendChild(btn);
-      row.appendChild(del);
-      userList.appendChild(row);
+    const del = document.createElement('button');
+    del.className   = 'secondary';
+    del.textContent = '🗑';
+    del.title       = `Delete "${name}" and all its notes`;
+    del.style.cssText = 'padding:0.35rem 0.6rem;font-size:1rem;flex-shrink:0';
+    del.addEventListener('click', async () => {
+      if (!confirm(`Delete category "${name}" and ALL its notes? This cannot be undone.`)) return;
+      await dbDeleteCategory(name);
+      const updated = getCategories().filter(c => c !== name);
+      localStorage.setItem('users', JSON.stringify(updated));
+      showLogin();
     });
-    const div = document.createElement('p');
-    div.style.cssText = 'font-size:0.85rem;color:#888;margin-top:0.5rem';
-    div.textContent   = 'Or add a new category:';
-    userList.appendChild(div);
-  }
+
+    row.appendChild(btn);
+    row.appendChild(del);
+    userList.appendChild(row);
+  });
 }
 
 function startSession(name) {
