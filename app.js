@@ -503,6 +503,7 @@ switchUserBtn.addEventListener('click', () => {
   history = [];
   convoHistory.innerHTML = '';
   mainInput.value = '';
+  updateClearBtn();
   showLogin();
 });
 
@@ -543,12 +544,13 @@ const editBtn       = document.getElementById('editBtn');
 const inputStatus   = document.getElementById('inputStatus');
 const convoHistory  = document.getElementById('convoHistory');
 
-mainInput.addEventListener('input', () => {
+function updateClearBtn() {
   clearInputBtn.style.display = mainInput.value ? '' : 'none';
-});
+}
+mainInput.addEventListener('input', updateClearBtn);
 clearInputBtn.addEventListener('click', () => {
   mainInput.value = '';
-  clearInputBtn.style.display = 'none';
+  updateClearBtn();
   mainInput.focus();
 });
 
@@ -650,6 +652,7 @@ micBtn.addEventListener('click', () =>
   startRecording(micBtn, micStatus, text => {
     const cur = mainInput.value.trim();
     mainInput.value = cur ? cur + '\n' + text : text;
+    updateClearBtn();
     mainInput.focus();
   }, true)
 );
@@ -665,6 +668,7 @@ noteBtn.addEventListener('click', async () => {
   try {
     const ts = await appendNote(currentCategory, content);
     mainInput.value         = '';
+    updateClearBtn();
     micStatus.textContent   = '';
     inputStatus.textContent = `Saved at ${ts}`;
     inputStatus.style.color = '#4caf50';
