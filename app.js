@@ -97,13 +97,47 @@ function todayDate() {
   return nowTimestamp().slice(0, 10);
 }
 
-async function appendNote(user, text) {
-  const date    = todayDate();
-  const existing = await dbGetDay(user, date);
-  const ts      = nowTimestamp();
-  const entry   = `[${ts}]\n${text.trim()}\n\n`;
-  await dbPutDay(user, date, existing + entry);
+async function appendNote(user, text, targetDate = null) {
+  const saveDate = targetDate || todayDate();
+  const today    = todayDate();
+  const existing = await dbGetDay(user, saveDate);
+  const ts       = nowTimestamp();
+  const entry    = (targetDate && targetDate !== today)
+    ? `[${ts} → filed under ${saveDate}]\n${text.trim()}\n\n`
+    : `[${ts}]\n${text.trim()}\n\n`;
+  await dbPutDay(user, saveDate, existing + entry);
   return ts;
+}
+
+async function detectNoteDate(text) {
+  const today = todayDate();
+  try {
+    const result = await anthropicOnce(
+      `Today is ${today}. Does the following note contain an instruction to file it under a specific date? ` +
+      'Look for phrases like "add this to yesterday", "file under last Monday", "this was from March 15", "save to April 1". ' +
+      'If yes, return ONLY the target date in YYYY-MM-DD format. ' +
+      'If there is no date instruction, return exactly the word: today',
+      text, 20
+    );
+    const d = result.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(d) && d !== today) return d;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function exportNotes() {
+  const records = await dbAllNotes(currentCategory);
+  if (!records.length) { alert('No notes to export.'); return; }
+  const header = `Note Taker Export — ${currentCategory}\nExported: ${nowTimestamp()}\n\n`;
+  const body   = records.map(r => `=== ${r.date} ===\n${r.content.trim()}`).join('\n\n');
+  const blob   = new Blob([header + body], { type: 'text/plain' });
+  const url    = URL.createObjectURL(blob);
+  const a      = document.createElement('a');
+  a.href = url; a.download = `notes-${currentCategory}-${todayDate()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 const EDIT_MARKER_RE = /\n*\[Edited: [^\]]+\]\n?$/;
@@ -423,6 +457,7 @@ const userLabel    = document.getElementById('userLabel');
 const switchUserBtn = document.getElementById('switchUserBtn');
 const settingsBtn   = document.getElementById('settingsBtn');
 const helpBtn       = document.getElementById('helpBtn');
+const exportBtn     = document.getElementById('exportBtn');
 
 let currentCategory = null;
 
@@ -509,6 +544,7 @@ switchUserBtn.addEventListener('click', () => {
 
 settingsBtn.addEventListener('click', showSettings);
 helpBtn.addEventListener('click', () => window.open('help.html', '_blank'));
+exportBtn.addEventListener('click', exportNotes);
 
 function showApp() {
   loginScreen.style.display    = 'none';
@@ -664,14 +700,15 @@ noteBtn.addEventListener('click', async () => {
   if (!content) return;
   noteBtn.disabled = true;
   micBtn.disabled  = true;
-  inputStatus.textContent = 'Saving…';
+  inputStatus.textContent = 'Checking…';
   inputStatus.style.color = '';
   try {
-    const ts = await appendNote(currentCategory, content);
+    const targetDate = await detectNoteDate(content);
+    await appendNote(currentCategory, content, targetDate);
     mainInput.value         = '';
     updateClearBtn();
     micStatus.textContent   = '';
-    inputStatus.textContent = `Saved at ${ts}`;
+    inputStatus.textContent = targetDate ? `Saved to ${targetDate}` : 'Saved';
     inputStatus.style.color = '#4caf50';
     setTimeout(() => inputStatus.textContent = '', 3000);
     mainInput.focus();
