@@ -533,14 +533,24 @@ updateClock();
 setInterval(updateClock, 1000);
 
 // ── Elements ───────────────────────────────────────────────────────────────────
-const mainInput   = document.getElementById('mainInput');
-const micBtn      = document.getElementById('micBtn');
-const micStatus   = document.getElementById('micStatus');
-const noteBtn     = document.getElementById('noteBtn');
-const queryBtn    = document.getElementById('queryBtn');
-const editBtn     = document.getElementById('editBtn');
-const inputStatus = document.getElementById('inputStatus');
-const convoHistory = document.getElementById('convoHistory');
+const mainInput     = document.getElementById('mainInput');
+const clearInputBtn = document.getElementById('clearInputBtn');
+const micBtn        = document.getElementById('micBtn');
+const micStatus     = document.getElementById('micStatus');
+const noteBtn       = document.getElementById('noteBtn');
+const queryBtn      = document.getElementById('queryBtn');
+const editBtn       = document.getElementById('editBtn');
+const inputStatus   = document.getElementById('inputStatus');
+const convoHistory  = document.getElementById('convoHistory');
+
+mainInput.addEventListener('input', () => {
+  clearInputBtn.style.display = mainInput.value ? '' : 'none';
+});
+clearInputBtn.addEventListener('click', () => {
+  mainInput.value = '';
+  clearInputBtn.style.display = 'none';
+  mainInput.focus();
+});
 
 let history = [];
 

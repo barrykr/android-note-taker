@@ -179,6 +179,26 @@ button.icon-btn svg      { width: 18px; height: 18px; stroke-width: 1.75; }
   margin-top: 1rem;
 }
 
+.input-wrap {
+  position: relative;
+}
+
+.clear-btn {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.8rem;
+  line-height: 1;
+  background: #e0e0e0;
+  color: #555;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+}
+.clear-btn:hover { background: #ccc; color: #111; opacity: 1; }
+
 /* ── Date chips (edit mode) ── */
 #editDateList {
   display: flex;

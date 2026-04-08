@@ -70,7 +70,10 @@
 
       <section id="inputSection">
         <div class="section-label">Note / Query</div>
-        <textarea id="mainInput" placeholder="Write or dictate a note, or ask a question…" rows="6"></textarea>
+        <div class="input-wrap">
+          <textarea id="mainInput" placeholder="Write or dictate a note, or ask a question…" rows="6"></textarea>
+          <button id="clearInputBtn" class="clear-btn" title="Clear text" style="display:none">&#x2715;</button>
+        </div>
         <div class="row">
           <button id="micBtn" class="icon-btn" title="Dictate — click to start, click again to stop"><i data-lucide="mic"></i></button>
           <button id="noteBtn" class="icon-btn" title="Save as Note"><i data-lucide="notebook-pen"></i></button>
