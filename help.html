@@ -197,12 +197,14 @@
       <span class="btn-tag">📓 Save Note</span>
       <span class="btn-tag">🔍 Query</span>
       <span class="btn-tag">✏️ Edit</span>
+      <span class="btn-tag">✕ Clear text</span>
     </div>
     <ul style="margin-top:1rem">
       <li><strong>Mic (dictate):</strong> Tap once to start recording. Speak your note. Recording stops automatically after 2 seconds of silence, or tap again to stop manually. The audio is transcribed and placed in the text box.</li>
       <li><strong>Save Note:</strong> Saves whatever is in the text box as a note, timestamped to today. Notes are appended — multiple saves in one day all accumulate.</li>
-      <li><strong>Query:</strong> Asks the AI a question using the text in the box. The AI reads all your relevant notes before answering. Results appear in the panel on the right (or below on mobile).</li>
+      <li><strong>Query:</strong> Asks the AI a question using the text in the box. The AI reads all your relevant notes and searches the web before answering. The question and answer appear directly below the text box.</li>
       <li><strong>Edit:</strong> Opens the note editor. Speak or type a date (e.g. <em>yesterday</em>, <em>April 3</em>) to load that day's notes and edit them directly.</li>
+      <li><strong>Clear (✕):</strong> Appears inside the text box whenever there is text. Tap it to clear the input in one tap.</li>
     </ul>
   </section>
 
@@ -223,17 +225,17 @@
   <!-- Querying -->
   <section>
     <h2><span class="icon">🔍</span> Querying Your Notes</h2>
-    <p>Type or dictate a question, then tap the Query button. The AI (Claude) reads your notes and answers based on what you have recorded.</p>
+    <p>Type or dictate a question, then tap the Query button. The AI (Claude) searches the web and reads your notes, then answers using both sources. Your question stays visible in the text box and the answer appears directly below it.</p>
     <p>Example questions:</p>
     <ul>
       <li><em>"What did I eat last week?"</em></li>
       <li><em>"Summarise my notes from this month."</em></li>
       <li><em>"Did I mention anything about the dentist?"</em></li>
       <li><em>"What tasks have I noted that are still outstanding?"</em></li>
+      <li><em>"What is the weather forecast for London?"</em></li>
     </ul>
-    <p>The conversation history is shown in the right panel. Each exchange shows your question and the AI's answer.</p>
     <div class="tip-box">
-      <strong>Tip:</strong> The AI only sees your notes — it will say so if you ask something not covered in them.
+      <strong>Tip:</strong> For questions answered by your notes, Claude cites the timestamps. For questions not in your notes, it falls back to web search results and cites the source URLs.
     </div>
   </section>
 
