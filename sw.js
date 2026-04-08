@@ -1,4 +1,4 @@
-const CACHE = 'note-taker-v2';
+const CACHE = 'note-taker-v3';
 const BASE  = '/android-note-taker';
 const SHELL = [BASE + '/', BASE + '/index.html', BASE + '/style.css', BASE + '/app.js',
                'https://unpkg.com/lucide@latest/dist/umd/lucide.min.js'];

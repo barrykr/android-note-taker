@@ -68,49 +68,42 @@
 
     <div id="mainLayout">
 
-      <div id="leftPanel">
-
-        <section id="inputSection">
-          <div class="section-label">Note / Query</div>
-          <textarea id="mainInput" placeholder="Write or dictate a note, or ask a question…" rows="10"></textarea>
-          <div class="row">
-            <button id="micBtn" class="icon-btn" title="Dictate — click to start, click again to stop"><i data-lucide="mic"></i></button>
-            <button id="noteBtn" class="icon-btn" title="Save as Note"><i data-lucide="notebook-pen"></i></button>
-            <button id="queryBtn" class="icon-btn" title="Ask a question about your notes"><i data-lucide="search"></i></button>
-            <button id="editBtn" class="icon-btn" title="Edit a previous note"><i data-lucide="pencil"></i></button>
-            <span id="inputStatus"></span>
-          </div>
-          <div id="micStatus"></div>
-        </section>
-
-        <section id="editSection" style="display:none">
-          <div id="editDatePhase">
-            <div class="section-label">Edit Notes — Choose a date</div>
-            <div class="row">
-              <input id="editDateInput" type="text" placeholder="e.g. yesterday, Apr 3…" style="flex:1" />
-              <button id="editDateMicBtn" class="icon-btn" title="Speak the date"><i data-lucide="mic"></i></button>
-              <button id="editDateGoBtn" class="icon-btn" title="Load notes for this date"><i data-lucide="arrow-right"></i></button>
-              <button id="editCancelBtn" class="icon-btn" title="Cancel"><i data-lucide="x"></i></button>
-            </div>
-            <div id="editDateStatus"></div>
-            <div id="editDateList"></div>
-          </div>
-          <div id="editEditorPhase" style="display:none">
-            <div class="section-label" id="editDateLabel"></div>
-            <textarea id="editNoteText" rows="12"></textarea>
-            <div class="row">
-              <button id="editSaveBtn" class="icon-btn" title="Save changes"><i data-lucide="save"></i></button>
-              <button id="editBackBtn" class="icon-btn" title="Back to date list"><i data-lucide="arrow-left"></i></button>
-              <span id="editStatus"></span>
-            </div>
-          </div>
-        </section>
-
-      </div>
-
-      <div id="queryPanel">
+      <section id="inputSection">
+        <div class="section-label">Note / Query</div>
+        <textarea id="mainInput" placeholder="Write or dictate a note, or ask a question…" rows="6"></textarea>
+        <div class="row">
+          <button id="micBtn" class="icon-btn" title="Dictate — click to start, click again to stop"><i data-lucide="mic"></i></button>
+          <button id="noteBtn" class="icon-btn" title="Save as Note"><i data-lucide="notebook-pen"></i></button>
+          <button id="queryBtn" class="icon-btn" title="Ask a question about your notes"><i data-lucide="search"></i></button>
+          <button id="editBtn" class="icon-btn" title="Edit a previous note"><i data-lucide="pencil"></i></button>
+          <span id="inputStatus"></span>
+        </div>
+        <div id="micStatus"></div>
         <div id="convoHistory"></div>
-      </div>
+      </section>
+
+      <section id="editSection" style="display:none">
+        <div id="editDatePhase">
+          <div class="section-label">Edit Notes — Choose a date</div>
+          <div class="row">
+            <input id="editDateInput" type="text" placeholder="e.g. yesterday, Apr 3…" style="flex:1" />
+            <button id="editDateMicBtn" class="icon-btn" title="Speak the date"><i data-lucide="mic"></i></button>
+            <button id="editDateGoBtn" class="icon-btn" title="Load notes for this date"><i data-lucide="arrow-right"></i></button>
+            <button id="editCancelBtn" class="icon-btn" title="Cancel"><i data-lucide="x"></i></button>
+          </div>
+          <div id="editDateStatus"></div>
+          <div id="editDateList"></div>
+        </div>
+        <div id="editEditorPhase" style="display:none">
+          <div class="section-label" id="editDateLabel"></div>
+          <textarea id="editNoteText" rows="12"></textarea>
+          <div class="row">
+            <button id="editSaveBtn" class="icon-btn" title="Save changes"><i data-lucide="save"></i></button>
+            <button id="editBackBtn" class="icon-btn" title="Back to date list"><i data-lucide="arrow-left"></i></button>
+            <span id="editStatus"></span>
+          </div>
+        </div>
+      </section>
 
     </div>
   </div>

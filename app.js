@@ -520,7 +520,6 @@ const noteBtn     = document.getElementById('noteBtn');
 const queryBtn    = document.getElementById('queryBtn');
 const editBtn     = document.getElementById('editBtn');
 const inputStatus = document.getElementById('inputStatus');
-const queryPanel  = document.getElementById('queryPanel');
 const convoHistory = document.getElementById('convoHistory');
 
 let history = [];
@@ -670,7 +669,6 @@ async function sendQuery(question) {
   aBubble.textContent = 'Thinking…';
   turn.append(qBubble, aBubble);
   convoHistory.appendChild(turn);
-  mainInput.value = '';
 
   try {
     const allNotes = await loadAllNotes(currentCategory, question);
