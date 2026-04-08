@@ -201,7 +201,7 @@
     </div>
     <ul style="margin-top:1rem">
       <li><strong>Mic (dictate):</strong> Tap once to start recording. Speak your note. Recording stops automatically after 2 seconds of silence, or tap again to stop manually. The audio is transcribed and placed in the text box.</li>
-      <li><strong>Save Note:</strong> Saves whatever is in the text box as a note, timestamped to today. Notes are appended — multiple saves in one day all accumulate.</li>
+      <li><strong>Save Note:</strong> Saves whatever is in the text box as a note. By default it files under today, but if your text includes a date instruction (e.g. <em>"add this to yesterday"</em> or <em>"file under April 5"</em>) it will save to that date instead. Multiple saves in one day accumulate.</li>
       <li><strong>Query:</strong> Asks the AI a question using the text in the box. The AI reads all your relevant notes and searches the web before answering. The question and answer appear directly below the text box.</li>
       <li><strong>Edit:</strong> Opens the note editor. Speak or type a date (e.g. <em>yesterday</em>, <em>April 3</em>) to load that day's notes and edit them directly.</li>
       <li><strong>Clear (✕):</strong> Appears inside the text box whenever there is text. Tap it to clear the input in one tap.</li>
@@ -267,6 +267,22 @@
     <p>When you query your notes, the AI only sees notes from the currently selected category, keeping contexts clean and separate.</p>
     <div class="note-box">
       <strong>Note:</strong> Category names and notes are stored locally in your browser. Clearing browser data will remove them.
+    </div>
+  </section>
+
+  <!-- Backup & Restore -->
+  <section>
+    <h2><span class="icon">💾</span> Backup &amp; Restore</h2>
+    <p>The category selection screen has two buttons at the bottom for backing up and restoring all your notes across every category:</p>
+    <ul>
+      <li><strong>⇓ Export All</strong> — downloads a single <code>.json</code> file containing every category and all their notes. Save this to Google Drive or email it to yourself regularly.</li>
+      <li><strong>⇑ Import</strong> — pick a previously exported <code>.json</code> file to restore. Any categories in the file are added if missing, and existing notes for matching dates are overwritten with the imported content.</li>
+    </ul>
+    <div class="note-box">
+      <strong>Important:</strong> Notes are stored in your browser's IndexedDB. Clearing browser site data will erase them permanently. Export regularly to avoid data loss.
+    </div>
+    <div class="tip-box">
+      <strong>Tip:</strong> After a restore, return to the category screen to see all imported categories listed and ready to use.
     </div>
   </section>
 
