@@ -495,9 +495,10 @@ const newUserInput = document.getElementById('newUserInput');
 const newUserBtn   = document.getElementById('newUserBtn');
 const loginStatus  = document.getElementById('loginStatus');
 const userLabel    = document.getElementById('userLabel');
-const switchUserBtn = document.getElementById('switchUserBtn');
-const settingsBtn     = document.getElementById('settingsBtn');
-const helpBtn         = document.getElementById('helpBtn');
+const switchUserBtn  = document.getElementById('switchUserBtn');
+const deleteCatBtn   = document.getElementById('deleteCatBtn');
+const settingsBtn    = document.getElementById('settingsBtn');
+const helpBtn        = document.getElementById('helpBtn');
 const exportAllBtn    = document.getElementById('exportAllBtn');
 const importBtn       = document.getElementById('importBtn');
 const importFileInput = document.getElementById('importFileInput');
@@ -525,29 +526,9 @@ function showLogin() {
   const cats = getCategories().slice().sort((a, b) => a.localeCompare(b));
   cats.forEach(name => {
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex;gap:0.4rem;align-items:center';
-
-    const btn = document.createElement('button');
-    btn.className   = 'user-btn';
-    btn.textContent = name;
-    btn.style.flex  = '1';
-    btn.addEventListener('click', () => startSession(name));
-
-    const del = document.createElement('button');
-    del.className   = 'secondary';
-    del.textContent = '🗑';
-    del.title       = `Delete "${name}" and all its notes`;
-    del.style.cssText = 'padding:0.35rem 0.6rem;font-size:1rem;flex-shrink:0';
-    del.addEventListener('click', async () => {
-      if (!confirm(`Delete category "${name}" and ALL its notes? This cannot be undone.`)) return;
-      await dbDeleteCategory(name);
-      const updated = getCategories().filter(c => c !== name);
-      localStorage.setItem('users', JSON.stringify(updated));
-      showLogin();
-    });
-
-    row.appendChild(btn);
-    row.appendChild(del);
+    row.className   = 'cat-row';
+    row.textContent = name;
+    row.addEventListener('click', () => startSession(name));
     userList.appendChild(row);
   });
 }
@@ -567,6 +548,19 @@ newUserInput.addEventListener('keydown', e => { if (e.key === 'Enter') newUserBt
 openSettingsBtn.addEventListener('click', showSettings);
 
 switchUserBtn.addEventListener('click', () => {
+  currentCategory = null;
+  history = [];
+  convoHistory.innerHTML = '';
+  mainInput.value = '';
+  updateClearBtn();
+  showLogin();
+});
+
+deleteCatBtn.addEventListener('click', async () => {
+  if (!confirm(`Delete category "${currentCategory}" and ALL its notes? This cannot be undone.`)) return;
+  await dbDeleteCategory(currentCategory);
+  const updated = getCategories().filter(c => c !== currentCategory);
+  localStorage.setItem('users', JSON.stringify(updated));
   currentCategory = null;
   history = [];
   convoHistory.innerHTML = '';

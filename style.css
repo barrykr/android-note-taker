@@ -32,30 +32,24 @@ body {
 .login-sub   { text-align: center; color: #888; font-size: 0.95rem; }
 
 #userList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
   height: 220px;
   overflow-y: auto;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 0.5rem;
-  background: #fafafa;
+  background: #fff;
 }
 
-.user-btn {
-  width: auto;
-  flex: 1;
-  padding: 0.7rem 1rem;
+.cat-row {
+  padding: 0.75rem 1rem;
   font-size: 1rem;
-  background: #f0f7ff;
   color: #2c3e50;
-  border: 1px solid #b3d4f5;
-  border-radius: 8px;
+  border-bottom: 1px solid #eee;
   cursor: pointer;
-  text-align: left;
+  user-select: none;
 }
-.user-btn:hover { background: #dceeff; }
+.cat-row:last-child { border-bottom: none; }
+.cat-row:hover { background: #f0f7ff; }
+.cat-row:active { background: #dceeff; }
 
 #newUserRow {
   display: flex;
@@ -148,6 +142,9 @@ button.icon-btn {
 button.icon-btn:hover    { background: #f0f0f0; color: #111; }
 button.icon-btn:disabled { background: transparent; color: #bbb; cursor: default; }
 button.icon-btn svg      { width: 18px; height: 18px; stroke-width: 1.75; }
+
+#deleteCatBtn       { color: #e74c3c; }
+#deleteCatBtn:hover { background: #fdf0ef; color: #c0392b; }
 
 #micBtn        { color: #e67e22; }
 #micBtn:hover  { background: #fff5ec; color: #ca6f1e; }
