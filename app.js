@@ -311,6 +311,24 @@ async function anthropicOnce(system, userMsg, maxTokens = 64) {
   return data.content[0].text.trim();
 }
 
+// ── Web search decision ───────────────────────────────────────────────────────
+async function needsWebSearch(question) {
+  try {
+    const result = await anthropicOnce(
+      'Decide whether the following question requires a live web search to answer well, ' +
+      'or whether it is a personal question that would be answered from the user\'s own notes. ' +
+      'Personal questions include anything about the user\'s own activities, health, tasks, ' +
+      'diet, appointments, or events. Web questions include current facts, news, definitions, ' +
+      'weather, prices, or anything requiring up-to-date external knowledge. ' +
+      'Reply with exactly one word: search or notes',
+      question, 10
+    );
+    return result.trim().toLowerCase() === 'search';
+  } catch {
+    return false;
+  }
+}
+
 // ── Web search (DuckDuckGo instant answers — no key required) ─────────────────
 async function searchWeb(query) {
   try {
@@ -778,8 +796,11 @@ async function sendQuery(question) {
       ? `<user_notes>\n${allNotes}\n</user_notes>`
       : '<user_notes>No notes recorded yet.</user_notes>';
 
-    aBubble.textContent = 'Searching the web…';
-    const webResults = await searchWeb(question);
+    let webResults = null;
+    if (await needsWebSearch(question)) {
+      aBubble.textContent = 'Searching the web…';
+      webResults = await searchWeb(question);
+    }
     const webSection = webResults
       ? `\n\n<web_search_results>\n${webResults}\n</web_search_results>`
       : '';
