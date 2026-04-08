@@ -545,7 +545,8 @@ const inputStatus   = document.getElementById('inputStatus');
 const convoHistory  = document.getElementById('convoHistory');
 
 function updateClearBtn() {
-  clearInputBtn.style.display = mainInput.value ? '' : 'none';
+  clearInputBtn.style.opacity  = mainInput.value ? '1' : '0';
+  clearInputBtn.style.pointerEvents = mainInput.value ? '' : 'none';
 }
 mainInput.addEventListener('input', updateClearBtn);
 clearInputBtn.addEventListener('click', () => {
