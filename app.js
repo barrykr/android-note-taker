@@ -127,17 +127,40 @@ async function detectNoteDate(text) {
   }
 }
 
-async function exportNotes() {
-  const records = await dbAllNotes(currentCategory);
-  if (!records.length) { alert('No notes to export.'); return; }
-  const header = `Note Taker Export — ${currentCategory}\nExported: ${nowTimestamp()}\n\n`;
-  const body   = records.map(r => `=== ${r.date} ===\n${r.content.trim()}`).join('\n\n');
-  const blob   = new Blob([header + body], { type: 'text/plain' });
-  const url    = URL.createObjectURL(blob);
-  const a      = document.createElement('a');
-  a.href = url; a.download = `notes-${currentCategory}-${todayDate()}.txt`;
+async function exportAllNotes() {
+  const cats = getCategories();
+  if (!cats.length) { alert('No categories to export.'); return; }
+  const data = { exported: nowTimestamp(), categories: {} };
+  for (const cat of cats) {
+    const records = await dbAllNotes(cat);
+    if (records.length) {
+      data.categories[cat] = {};
+      records.forEach(r => { data.categories[cat][r.date] = r.content; });
+    }
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `note-taker-backup-${todayDate()}.json`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+async function importNotes(file) {
+  let data;
+  try { data = JSON.parse(await file.text()); } catch { alert('Invalid backup file.'); return; }
+  if (!data.categories || typeof data.categories !== 'object') { alert('Invalid backup format.'); return; }
+  let days = 0;
+  for (const [cat, dates] of Object.entries(data.categories)) {
+    addCategory(cat);
+    for (const [date, content] of Object.entries(dates)) {
+      await dbPutDay(cat, date, content);
+      days++;
+    }
+  }
+  const catCount = Object.keys(data.categories).length;
+  alert(`Imported ${days} day${days !== 1 ? 's' : ''} of notes across ${catCount} categor${catCount !== 1 ? 'ies' : 'y'}.`);
+  showLogin();
 }
 
 const EDIT_MARKER_RE = /\n*\[Edited: [^\]]+\]\n?$/;
@@ -455,9 +478,11 @@ const newUserBtn   = document.getElementById('newUserBtn');
 const loginStatus  = document.getElementById('loginStatus');
 const userLabel    = document.getElementById('userLabel');
 const switchUserBtn = document.getElementById('switchUserBtn');
-const settingsBtn   = document.getElementById('settingsBtn');
-const helpBtn       = document.getElementById('helpBtn');
-const exportBtn     = document.getElementById('exportBtn');
+const settingsBtn     = document.getElementById('settingsBtn');
+const helpBtn         = document.getElementById('helpBtn');
+const exportAllBtn    = document.getElementById('exportAllBtn');
+const importBtn       = document.getElementById('importBtn');
+const importFileInput = document.getElementById('importFileInput');
 
 let currentCategory = null;
 
@@ -544,7 +569,12 @@ switchUserBtn.addEventListener('click', () => {
 
 settingsBtn.addEventListener('click', showSettings);
 helpBtn.addEventListener('click', () => window.open('help.html', '_blank'));
-exportBtn.addEventListener('click', exportNotes);
+exportAllBtn.addEventListener('click', exportAllNotes);
+importBtn.addEventListener('click', () => importFileInput.click());
+importFileInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) { importNotes(file); importFileInput.value = ''; }
+});
 
 function showApp() {
   loginScreen.style.display    = 'none';
