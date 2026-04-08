@@ -175,7 +175,6 @@ function getKeys() {
   return {
     anthropic: localStorage.getItem('anthropicKey') || '',
     openai:    localStorage.getItem('openaiKey')    || '',
-    brave:     localStorage.getItem('braveKey')     || '',
   };
 }
 
@@ -255,19 +254,24 @@ async function anthropicOnce(system, userMsg, maxTokens = 64) {
   return data.content[0].text.trim();
 }
 
-// ── Web search (Brave) ────────────────────────────────────────────────────────
+// ── Web search (DuckDuckGo instant answers — no key required) ─────────────────
 async function searchWeb(query) {
-  const { brave } = getKeys();
-  if (!brave) return null;
-  const url = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=5`;
-  const resp = await fetch(url, {
-    headers: { 'Accept': 'application/json', 'X-Subscription-Token': brave },
-  });
-  if (!resp.ok) return null;
-  const data = await resp.json();
-  const hits = (data.web?.results || []).slice(0, 5);
-  if (!hits.length) return null;
-  return hits.map(r => `${r.title}\n${r.url}\n${r.description || ''}`.trim()).join('\n\n');
+  try {
+    const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&skip_disambig=1`;
+    const resp = await fetch(url);
+    if (!resp.ok) return null;
+    const d = await resp.json();
+    const parts = [];
+    if (d.Answer)       parts.push(d.Answer);
+    if (d.AbstractText) parts.push(`${d.AbstractText}\n${d.AbstractURL}`);
+    if (d.Definition)   parts.push(`${d.Definition}\n${d.DefinitionURL}`);
+    (d.RelatedTopics || []).filter(t => t.Text).slice(0, 4)
+      .forEach(t => parts.push(t.FirstURL ? `${t.Text}\n${t.FirstURL}` : t.Text));
+    const result = parts.filter(Boolean).join('\n\n');
+    return result || null;
+  } catch {
+    return null;
+  }
 }
 
 // ── OpenAI Whisper transcription ───────────────────────────────────────────────
@@ -359,7 +363,6 @@ fetch('keys.json', { cache: 'no-store' })
 const settingsScreen  = document.getElementById('settingsScreen');
 const anthropicKeyIn  = document.getElementById('anthropicKeyInput');
 const openaiKeyIn     = document.getElementById('openaiKeyInput');
-const braveKeyIn      = document.getElementById('braveKeyInput');
 const saveKeysBtn     = document.getElementById('saveKeysBtn');
 const settingsStatus  = document.getElementById('settingsStatus');
 const openSettingsBtn = document.getElementById('openSettingsBtn');
@@ -391,7 +394,6 @@ function showSettings() {
   appEl.style.display           = 'none';
   anthropicKeyIn.value = '';
   openaiKeyIn.value    = '';
-  braveKeyIn.value     = '';
   sharedKeyInput.value = '';
   unlockStatus.textContent = '';
 }
@@ -399,12 +401,9 @@ function showSettings() {
 saveKeysBtn.addEventListener('click', () => {
   const a = anthropicKeyIn.value.trim();
   const o = openaiKeyIn.value.trim();
-  const b = braveKeyIn.value.trim();
-  if (!a || !o) { settingsStatus.textContent = 'Anthropic and OpenAI keys are required.'; return; }
+  if (!a || !o) { settingsStatus.textContent = 'Both keys are required.'; return; }
   localStorage.setItem('anthropicKey', a);
   localStorage.setItem('openaiKey', o);
-  if (b) localStorage.setItem('braveKey', b);
-  else localStorage.removeItem('braveKey');
   settingsScreen.style.display = 'none';
   if (currentCategory) {
     showApp();
@@ -697,11 +696,8 @@ async function sendQuery(question) {
       ? `<user_notes>\n${allNotes}\n</user_notes>`
       : '<user_notes>No notes recorded yet.</user_notes>';
 
-    let webResults = null;
-    if (getKeys().brave) {
-      aBubble.textContent = 'Searching the web…';
-      webResults = await searchWeb(question);
-    }
+    aBubble.textContent = 'Searching the web…';
+    const webResults = await searchWeb(question);
     const webSection = webResults
       ? `\n\n<web_search_results>\n${webResults}\n</web_search_results>`
       : '';
