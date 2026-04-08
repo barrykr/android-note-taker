@@ -522,7 +522,7 @@ function showLogin() {
   settingsScreen.style.display = 'none';
   userList.innerHTML         = '';
   loginStatus.textContent    = '';
-  const cats = getCategories();
+  const cats = getCategories().slice().sort((a, b) => a.localeCompare(b));
   if (cats.length) {
     const lbl = document.createElement('p');
     lbl.style.cssText   = 'font-size:0.85rem;color:#888;margin-bottom:0.25rem';
