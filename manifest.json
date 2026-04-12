@@ -1,6 +1,6 @@
 {
-  "name": "Note Taker",
-  "short_name": "Notes",
+  "name": "BD Smart Notes",
+  "short_name": "BD Notes",
   "description": "Personal AI-powered note taker",
   "start_url": "/android-note-taker/",
   "display": "standalone",
